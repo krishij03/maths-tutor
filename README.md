@@ -33,7 +33,7 @@ For Windows:-
 ```bash
   python3 -m venv qttutor
   cd qttutor
-  qttutor\Scripts\activate
+  .\Scripts\activate
 
 ```
 3. Install dependencies
