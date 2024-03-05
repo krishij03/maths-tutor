@@ -81,6 +81,7 @@ class MathTutorApp(QMainWindow):
         if self.currentQuestionIndex<len(self.questions):
             question, _=self.questions[self.currentQuestionIndex]
             self.questionLabel.setText(question)
+            self.readQuestionAloud()
             self.answerInput.clear()
             self.answerInput.setEnabled(True)  
         else:  
@@ -90,15 +91,22 @@ class MathTutorApp(QMainWindow):
             self.answerInput.setEnabled(False)  
     def checkAnswer(self):
         if self.currentQuestionIndex < len(self.questions):
-            _, correctAnswer=self.questions[self.currentQuestionIndex]
-            userAnswer=self.answerInput.text().strip()
-            if userAnswer==correctAnswer.strip():
-                self.currentQuestionIndex+=1
+            _, correctAnswer = self.questions[self.currentQuestionIndex]
+            userAnswer = self.answerInput.text().strip()
+            if userAnswer == correctAnswer.strip():
+                self.currentQuestionIndex += 1
                 self.updateGif("correct.gif" if self.currentQuestionIndex < len(self.questions) else "congratulations.gif")
+                self.speakFeedback("Excellent")
                 self.showQuestion()
             else:
                 self.updateGif("wrong.gif")
+                self.speakFeedback("Try again")
             self.answerInput.clear()
+    def speakFeedback(self, feedback):
+        if sys.platform.startswith('darwin'):
+            os.system(f'say "{feedback}"')
+        elif sys.platform.startswith('linux') or sys.platform.startswith('linux2') or sys.platform.startswith('win32') or sys.platform.startswith('cygwin'):
+            os.system(f'espeak "{feedback}"')
     def updateGif(self,gifName):
         imagePath=os.path.join("images",gifName)  
         self.gifLabel.setMovie(None)  
