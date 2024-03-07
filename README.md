@@ -13,6 +13,7 @@ this is the qt6Test branch
 - Uses 'espeak' for windows and linux and 'say' for mac
 - Basic gif changes for start, right answer, wrong answer and congratulations
 - Default lesson is Addition (Easy)
+- Score System and Timer, score increases +5 with every right answer and -2 with every incorrect one
 
 
 
