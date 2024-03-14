@@ -2,7 +2,7 @@ import sys
 from PyQt6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QLabel, QLineEdit, QMessageBox, QComboBox, QMainWindow, QToolBar, QPushButton)
 from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtGui import QFont
-from core_logic import QuestionManager, ScoreManager, Timer
+from coreLogic import QuestionManager, ScoreManager, Timer
 
 class MathTutorGUI(QMainWindow):
     def __init__(self):

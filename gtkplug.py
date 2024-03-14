@@ -2,7 +2,7 @@ import sys
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GLib
-from core_logic import QuestionManager, ScoreManager, Timer
+from coreLogic import QuestionManager, ScoreManager, Timer
 
 class MathTutorGUI(Gtk.Window):
     def __init__(self):
