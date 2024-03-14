@@ -1,7 +1,7 @@
 
 # math-tutor
 
-this is the qt6Test branch
+this is the coreLogic branch
 
 
 ## Basic Components
