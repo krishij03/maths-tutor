@@ -17,4 +17,4 @@ Below, is a simple implementation of the independent core logic of the math tuto
 - QuestionManager 
 - ScoreManager 
 - Timer
-<img src="math-tutor/screenshots/Screenshot 2024-03-15 at 1.14.27 AM.png" style="width:100%" alt="Merchant Side"/>
+<img src="screenshots/Screenshot 2024-03-15 at 1.14.27 AM.png" style="width:100%" alt=""/>
