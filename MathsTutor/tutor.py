@@ -33,6 +33,8 @@ import threading
 import math
 import random
 import time
+import subprocess
+import platform
 listing_symbol = ","
 range_symbol = ":"
 multiplier_symbol = ";"
@@ -125,11 +127,24 @@ class MathsTutorBin(QWidget):
         self.image.setMovie(movie)
         movie.start()
 
-    def speak(self, text, enqueue=False):
-        # if(enqueue == False):
-        #     self.speech.cancel();
-        # self.speech.speak(text)
-        return
+    # def speak(self, text, enqueue=False):
+    #     # if(enqueue == False):
+    #     #     self.speech.cancel();
+    #     # self.speech.speak(text)
+    #     return
+    def speak(self, text):
+        os_name= platform.system()
+        if os_name== 'Darwin':
+            subprocess.run(['say', text])
+        elif os_name == 'Windows': 
+            #using SpeechSynthesizer api on windows but works on windows 10 or later only TESTING REQUIRED
+            subprocess.run(['powershell', '-Command', f'Add-Type -TypeDefinition @"public class Speech {{ public static void Speak(string text) {{ System.Speech.Synthesis.SpeechSynthesizer synth = new System.Speech.Synthesis.SpeechSynthesizer(); synth.Speak(text); }} "@; [Speech]::Speak("{text}")'])
+        elif os_name == 'Linux':
+            #espeak needs to installed on linux
+            subprocess.run(['espeak', text])
+        else:
+            print(f"Unsupported operating system: {os_name}")
+            return
    
     #Function to read the questions from the file
     def load_question_file(self, file_path):
