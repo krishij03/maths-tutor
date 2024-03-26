@@ -398,7 +398,7 @@ class SelectGame(QWidget):
         about_dialog.exec()
         
     def on_help_clicked(self):
-        url = QUrl(global_var.user_guide_file_path)
+        url= QUrl.fromLocalFile(global_var.user_guide_file_path)
         QDesktopServices.openUrl(url)
 
     def closeEvent(self, event):
