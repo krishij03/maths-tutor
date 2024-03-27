@@ -76,6 +76,7 @@ class MathsTutorBin(QWidget):
         font= QFont()
         font.setPointSize(100) #font size 100
         self.entry.setFont(font)
+        self.label.setWordWrap(True)
         self.entry.setAlignment(Qt.AlignmentFlag.AlignCenter)
         
         #imp connecting returnPressed signal of entry widget to the self.on_entry_activated method
