@@ -46,6 +46,14 @@ language_dict = {"en": "English", "hi": "Hindi", "ar": "Arabic", "ta": "Tamil", 
 
 #need to create this instance of QApplication to use the _() function
 app= QApplication(sys.argv)
+def set_language(language_code):
+    global _
+    mo_location= global_var.locale_dir
+    gettext.bindtextdomain(global_var.app_name, mo_location)
+    gettext.textdomain(global_var.app_name)
+    lang= gettext.translation(global_var.app_name, localedir=mo_location, languages=[language_code])
+    _= lang.gettext
+    gettext.install(global_var.app_name,localedir=mo_location,names=["ngettext"])
 
 class LanguageSelectionDialog(QDialog):
     def __init__(self, parent=None, language=0):
@@ -118,43 +126,33 @@ class SelectGame(QWidget):
 
         if self.pref.language == -1:
             self.pref.language = 0
-        
-        lang_dialog = LanguageSelectionDialog(self, self.pref.language)
-        result = lang_dialog.exec()
-        if result == QDialog.accepted:
-            selected_language = lang_dialog.get_selected_language()
-            self.pref.language = list(language_dict.keys()).index(selected_language)
+        lang_dialog= LanguageSelectionDialog(self, self.pref.language)
+        result= lang_dialog.exec()
+        if result== QDialog.DialogCode.Accepted:
+            selected_language= lang_dialog.get_selected_language()
+            self.pref.languag= list(language_dict.keys()).index(selected_language)
+            set_language(selected_language)
             if lang_dialog.get_remember_selection():
                 self.pref.remember_language = 1
         else:
-            #setting default language for now (eng) which is at index 0
-            self.pref.language = 0 
-            
-        # if self.pref.remember_language == 1:
-        #     selected_language = list(language_dict)[self.pref.language]
-        # else:
-        #     # Create and show the language selection dialog
-        #     lang_dialog = LanguageSelectionDialog(self, self.pref.language)
-        #     result = lang_dialog.exec()
-
-        #     if result == QDialog.accepted:
-        #         selected_language = lang_dialog.get_selected_language()
-        #         self.pref.language = list(language_dict.keys()).index(selected_language)
-        #         if lang_dialog.get_remember_selection():
-        #             self.pref.remember_language = 1
-        #     else:
-        #         return
-
-        # try:
-        #     global _
-        #     lang1 = gettext.translation(global_var.app_name, languages=[selected_language])
-        #     lang1.install()
-        #     _ = lang1.gettext
-        # except:
-        #     self.pref.language = 0
+            self.pref.language = 0  # Default to English or another default
 
         if previous_language != self.pref.language:
             self.pref.speech_language = -1
+        
+        # COMMENTED CODE BELOW IS TO RUN ENGLISH AS DEFAULT LANGUAGE
+        # lang_dialog = LanguageSelectionDialog(self, self.pref.language)
+        # result = lang_dialog.exec()
+        # if result == QDialog.accepted:
+        #     selected_language = lang_dialog.get_selected_language()
+        #     self.pref.language = list(language_dict.keys()).index(selected_language)
+        #     if lang_dialog.get_remember_selection():
+        #         self.pref.remember_language = 1
+        # else:
+        #     #setting default language for now (eng) which is at index 0
+        #     self.pref.language = 0 
+        # if previous_language != self.pref.language:
+        #     self.pref.speech_language = -1
 
         self.operator_mapping = {
             _('Addition (+)'): {

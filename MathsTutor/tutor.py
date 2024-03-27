@@ -96,6 +96,8 @@ class MathsTutorBin(QWidget):
         
         #creatng QMediaPlayer instance
         self.player = QMediaPlayer()
+        default_lesson_path = os.path.join(global_var.data_dir, "lessons", "add_simple.txt")
+        self.load_question_file(default_lesson_path)
 
     def grab_focus_on_entry(self):
         self.entry.setFocus()
