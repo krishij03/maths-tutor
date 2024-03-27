@@ -404,8 +404,6 @@ class SelectGame(QWidget):
         event.accept()
 
 if __name__=="__main__":
-    print("Before SelectGame")
     win = SelectGame()
     win.show()
-    print("After SelectGame")
     app.exec()
