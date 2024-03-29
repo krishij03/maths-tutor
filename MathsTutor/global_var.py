@@ -20,8 +20,9 @@
 ###########################################################################
 import os
 
-data_dir = "/usr/share/maths-tutor"
-locale_dir = "/usr/share/locale"
-app_name = "Maths-Tutor"
-user_preferences_file_path = os.environ['HOME']+'/.maths-tutor.cfg'
-user_guide_file_path = data_dir+"/user-manual.html"
+root_dir= os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+data_dir= root_dir
+locale_dir= os.path.join(root_dir, 'locale')
+app_name= "Maths-Tutor"
+user_preferences_file_path= os.path.join(os.environ['HOME'], ".maths-tutor.cfg")
+user_guide_file_path= os.path.join(data_dir, "user-manual.html")
