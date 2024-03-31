@@ -229,7 +229,7 @@ class SelectGame(QWidget):
         self.controls_widget= QWidget()
         self.vbox_controls= QVBoxLayout()
         self.controls_widget.setLayout(self.vbox_controls)
-
+        self.controls_widget.setVisible(False)
         #hbox for the operator labels and comboBox
         operator_box= QHBoxLayout()
         select_operator_label= QLabel(_("Select Operation:"))
