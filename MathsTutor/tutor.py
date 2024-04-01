@@ -21,10 +21,11 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###########################################################################
 from PyQt6 import QtCore, QtGui, QtWidgets
-from PyQt6.QtCore import Qt, QUrl, QTimer
+from PyQt6.QtCore import Qt, QUrl, QTimer,QLocale
 from PyQt6.QtGui import QFont, QImage, QPixmap, QMovie
 from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QWidget, QSpacerItem, QSizePolicy
 from PyQt6.QtMultimedia import QMediaPlayer,QAudioOutput
+from PyQt6.QtTextToSpeech import QTextToSpeech
 # from MathsTutor import global_var
 import global_var
 import re
@@ -51,6 +52,12 @@ class MathsTutorBin(QWidget):
         #set audio output device
         self.player.setAudioOutput(self.audioOutput)
         self.audioOutput.setVolume(0.5)
+        self.text_to_speech= QTextToSpeech()
+        self.text_to_speech.setLocale(QLocale('en_US'))
+        available_voices= self.text_to_speech.availableVoices()
+        selected_voice= available_voices[0] if available_voices else None
+        if selected_voice:
+            self.text_to_speech.setVoice(selected_voice)
         vbox = QVBoxLayout()
         vbox2 = QVBoxLayout()
         self.setLayout(vbox)
@@ -136,18 +143,7 @@ class MathsTutorBin(QWidget):
     #     # self.speech.speak(text)
     #     return
     def speak(self, text):
-        os_name= platform.system()
-        if os_name== 'Darwin':
-            subprocess.run(['say', text])
-        elif os_name == 'Windows': 
-            #using SpeechSynthesizer api on windows but works on windows 10 or later only TESTING REQUIRED
-            subprocess.run(['powershell', '-Command', f'Add-Type -TypeDefinition @"public class Speech {{ public static void Speak(string text) {{ System.Speech.Synthesis.SpeechSynthesizer synth = new System.Speech.Synthesis.SpeechSynthesizer(); synth.Speak(text); }} "@; [Speech]::Speak("{text}")'])
-        elif os_name == 'Linux':
-            #espeak needs to installed on linux
-            subprocess.run(['espeak', text])
-        else:
-            print(f"Unsupported operating system: {os_name}")
-            return
+       self.text_to_speech.say(text)
    
     #Function to read the questions from the file
     def load_question_file(self, file_path):
