@@ -32,12 +32,12 @@ from PyQt6.QtMultimedia import QMediaPlayer,QAudioOutput
 # from MathsTutor.tutor import MathsTutorBin
 import sys
 import os
-from tutor import MathsTutorBin
-import global_var
-import preferences
-# from MathsTutor.tutor import MathsTutorBin
-# from MathsTutor import preferences
-# from MathsTutor import global_var
+# from tutor import MathsTutorBin
+# import global_var
+# import preferences
+from MathsTutor.tutor import MathsTutorBin
+from MathsTutor import preferences
+from MathsTutor import global_var
 import gettext
 gettext.bindtextdomain(global_var.app_name,global_var.locale_dir)
 gettext.textdomain(global_var.app_name)

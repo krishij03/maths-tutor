@@ -26,8 +26,8 @@ from PyQt6.QtGui import QFont, QImage, QPixmap, QMovie
 from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QWidget, QSpacerItem, QSizePolicy
 from PyQt6.QtMultimedia import QMediaPlayer,QAudioOutput
 from PyQt6.QtTextToSpeech import QTextToSpeech
-# from MathsTutor import global_var
-import global_var
+from MathsTutor import global_var
+# import global_var
 import re
 import os
 import threading
