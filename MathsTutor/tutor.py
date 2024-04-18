@@ -25,8 +25,8 @@ from PyQt6.QtCore import Qt, QUrl, QTimer,QLocale
 from PyQt6.QtGui import QFont, QImage, QPixmap, QMovie
 from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QWidget, QSpacerItem, QSizePolicy
 from PyQt6.QtMultimedia import QMediaPlayer,QAudioOutput
-from PyQt6.QtTextToSpeech import QTextToSpeech
 from MathsTutor import global_var
+from PyQt6.QtTextToSpeech import QTextToSpeech
 # import global_var
 import re
 import os
@@ -43,6 +43,7 @@ multiplier_symbol = ";"
 class MathsTutorBin(QWidget):
     def __init__(self, gettext, language='en_US'):
         super().__init__()
+        
         self.player = QMediaPlayer()
         global _;
         _ = gettext
@@ -103,7 +104,7 @@ class MathsTutorBin(QWidget):
         
         #creatng QMediaPlayer instance
         self.player = QMediaPlayer()
-        default_lesson_path = os.path.join(global_var.data_dir, "lessons", "add_simple.txt")
+        default_lesson_path = os.path.join(global_var.data_dir, "lessons", "add_easy.txt")
         self.load_question_file(default_lesson_path)
 
     def grab_focus_on_entry(self):
@@ -142,7 +143,20 @@ class MathsTutorBin(QWidget):
     #     # self.speech.speak(text)
     #     return
     def speak(self, text):
-       self.text_to_speech.say(text)
+        self.text_to_speech.say(text)
+    # def speak(self, text):
+    #     os_name= platform.system()
+    #     if os_name== 'Darwin':
+    #         subprocess.run(['say', text])
+    #     elif os_name == 'Windows': 
+    #         #using SpeechSynthesizer api on windows but works on windows 10 or later only TESTING REQUIRED
+    #         subprocess.run(['powershell', '-Command', f'Add-Type -TypeDefinition @"public class Speech {{ public static void Speak(string text) {{ System.Speech.Synthesis.SpeechSynthesizer synth = new System.Speech.Synthesis.SpeechSynthesizer(); synth.Speak(text); }} "@; [Speech]::Speak("{text}")'])
+    #     elif os_name == 'Linux':
+    #         #espeak needs to installed on linux
+    #         subprocess.run(['espeak', text])
+    #     else:
+    #         print(f"Unsupported operating system: {os_name}")
+    #         return
    
     #Function to read the questions from the file
     def load_question_file(self, file_path):
@@ -457,4 +471,3 @@ class MathsTutorBin(QWidget):
 
 if __name__ == "__main__":
     win = MathsTutorWindow()
-

@@ -29,7 +29,6 @@ from PyQt6.QtWidgets import(
 from PyQt6.QtGui import QIcon,QPixmap,QDesktopServices
 from PyQt6.QtCore import Qt,QUrl
 from PyQt6.QtMultimedia import QMediaPlayer,QAudioOutput
-# from MathsTutor.tutor import MathsTutorBin
 import sys
 import os
 # from tutor import MathsTutorBin
@@ -39,21 +38,19 @@ from MathsTutor.tutor import MathsTutorBin
 from MathsTutor import preferences
 from MathsTutor import global_var
 import gettext
-gettext.bindtextdomain(global_var.app_name,global_var.locale_dir)
-gettext.textdomain(global_var.app_name)
+
 _ = gettext.gettext
 language_dict = {"en": "English", "hi": "Hindi", "ar": "Arabic", "ta": "Tamil", "ml": "Malayalam", "sa": "Sanskrit"}
 
-#need to create this instance of QApplication to use the _() function
-app= QApplication(sys.argv)
+#function to update global translation function
 def set_language(language_code):
     global _
-    mo_location= global_var.locale_dir
+    mo_location = global_var.locale_dir
     gettext.bindtextdomain(global_var.app_name, mo_location)
     gettext.textdomain(global_var.app_name)
-    lang= gettext.translation(global_var.app_name, localedir=mo_location, languages=[language_code])
-    _= lang.gettext
-    gettext.install(global_var.app_name,localedir=mo_location,names=["ngettext"])
+    lang = gettext.translation(global_var.app_name, localedir=mo_location, languages=[language_code])
+    _ = lang.gettext
+    gettext.install(global_var.app_name, localedir=mo_location, names=["ngettext"])
 
 class LanguageSelectionDialog(QDialog):
     def __init__(self, parent=None, language=0):
@@ -119,26 +116,26 @@ class SelectGame(QWidget):
         self.player.play()
         
 
-        self.pref = preferences.Preferences()
+        self.pref= preferences.Preferences()
         self.pref.load_preferences_from_file(global_var.user_preferences_file_path)
 
-        previous_language = self.pref.language
+        previous_language =self.pref.language
 
-        if self.pref.language == -1:
-            self.pref.language = 0
-        lang_dialog= LanguageSelectionDialog(self, self.pref.language)
+        if self.pref.language== -1:
+            self.pref.language= 0
+        lang_dialog= LanguageSelectionDialog(self,self.pref.language)
         result= lang_dialog.exec()
         if result== QDialog.DialogCode.Accepted:
             selected_language= lang_dialog.get_selected_language()
-            self.pref.languag= list(language_dict.keys()).index(selected_language)
+            self.pref.language= list(language_dict.keys()).index(selected_language)
             set_language(selected_language)
             if lang_dialog.get_remember_selection():
                 self.pref.remember_language = 1
         else:
-            self.pref.language = 0  # Default to English or another default
+            self.pref.language= 0 #default to eng 
 
-        if previous_language != self.pref.language:
-            self.pref.speech_language = -1
+        if previous_language!= self.pref.language:
+            self.pref.speech_language= -1
         
         # COMMENTED CODE BELOW IS TO RUN ENGLISH AS DEFAULT LANGUAGE
         # lang_dialog = LanguageSelectionDialog(self, self.pref.language)
@@ -153,7 +150,7 @@ class SelectGame(QWidget):
         #     self.pref.language = 0 
         # if previous_language != self.pref.language:
         #     self.pref.speech_language = -1
-
+        
         self.operator_mapping = {
             _('Addition (+)'): {
                 _('Simple'): 'add_simple.txt',
@@ -161,6 +158,7 @@ class SelectGame(QWidget):
                 _('Medium'): 'add_med.txt',
                 _('Hard'): 'add_hard.txt',
                 _('Challenging'): 'add_chlg.txt',
+                _('Problems'): 'wp_easy.txt',
             },
             _('Subtraction (-)'): {
                 _('Simple'): 'sub_simple.txt',
@@ -197,7 +195,7 @@ class SelectGame(QWidget):
         #main layout stuff
         main_layout= QVBoxLayout()
         self.setLayout(main_layout)
-
+        main_layout.addStretch(1)
         #hbox for show/hide settings, about, user-guide, and quit
         hbox2= QHBoxLayout()
 
@@ -267,9 +265,10 @@ class SelectGame(QWidget):
         self.vbox_controls.addWidget(button_reset_settings)
 
         #create game_bin widget (takes 2 empty positional argumentss) and add it to the vbox_game_and_controls layout
-        self.game_bin= MathsTutorBin(_,selected_language)
+        self.game_bin = MathsTutorBin(_, selected_language)
         self.game_bin.connect_game_over_callback_function(self.move_game_to_next_level)
         vbox_game_and_controls= QVBoxLayout()
+        vbox_game_and_controls.addStretch(1)
         vbox_game_and_controls.addWidget(self.game_bin)
 
         #add controls widget to the vbox_game_and_controls layout
@@ -288,12 +287,14 @@ class SelectGame(QWidget):
         vbox_game_and_controls.addWidget(label)
 
         vbox_game_and_controls.addLayout(hbox2)
-
+        vbox_game_and_controls.addStretch(1)
         #add vbox_game_and_controls layout to the main layout
         main_layout.addLayout(vbox_game_and_controls)
-
+        main_layout.addStretch(1)
         self.showMaximized()
         self.on_start_button_clicked()
+
+    
 
     def move_game_to_next_level(self):
         if self.pref.level+ 1< self.mode_combobox.count():
@@ -330,7 +331,7 @@ class SelectGame(QWidget):
 
         # Check if file_path is None and handle it
         if file_path is None:
-            QMessageBox.warning(self, _("Error"), _("File path not found for the selected operator and mode."))
+            # QMessageBox.warning(self, _("Error"), _("File path not found for the selected operator and mode."))
             return
 
         # Proceed with the original operation now that we've ensured file_path is not None
@@ -386,7 +387,7 @@ class SelectGame(QWidget):
 "Copyright (C) 2022-2023 Greeshna Sarath greeshnamohan001@gmail.com\n\n"
 "Supervised by Zendalona(2022-2024)\n\n"
 "License: GNU General Public License - GPL-2.0\n\n"
-"Website: http://wwww,zendalona.com/maths-tutor\n\n"
+"Website: http://wwww.zendalona.com/maths-tutor\n\n"
 "Authors: Roopasree A P, Greeshna Sarath\n"
 "Documenters: Roopasree A P, Greeshna Sarath\n"
 "Artists: Nalin Sathyan, Dr. Saritha Namboodiri, K. Sathyaseelan, Mukundhan Annamalai, "
@@ -402,8 +403,3 @@ class SelectGame(QWidget):
     def closeEvent(self, event):
         self.game_bin.on_quit()
         event.accept()
-
-if __name__=="__main__":
-    win = SelectGame()
-    win.show()
-    app.exec()
