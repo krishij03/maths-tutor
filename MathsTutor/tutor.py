@@ -41,9 +41,8 @@ range_symbol = ":"
 multiplier_symbol = ";"
 
 class MathsTutorBin(QWidget):
-    def __init__(self, speech_object, gettext):
+    def __init__(self, gettext, language='en_US'):
         super().__init__()
-        self.speech = speech_object
         self.player = QMediaPlayer()
         global _;
         _ = gettext
@@ -53,7 +52,7 @@ class MathsTutorBin(QWidget):
         self.player.setAudioOutput(self.audioOutput)
         self.audioOutput.setVolume(0.5)
         self.text_to_speech= QTextToSpeech()
-        self.text_to_speech.setLocale(QLocale('en_US'))
+        self.text_to_speech.setLocale(QLocale(language))
         available_voices= self.text_to_speech.availableVoices()
         selected_voice= available_voices[0] if available_voices else None
         if selected_voice:

@@ -267,7 +267,7 @@ class SelectGame(QWidget):
         self.vbox_controls.addWidget(button_reset_settings)
 
         #create game_bin widget (takes 2 empty positional argumentss) and add it to the vbox_game_and_controls layout
-        self.game_bin= MathsTutorBin(_, _)
+        self.game_bin= MathsTutorBin(_,selected_language)
         self.game_bin.connect_game_over_callback_function(self.move_game_to_next_level)
         vbox_game_and_controls= QVBoxLayout()
         vbox_game_and_controls.addWidget(self.game_bin)
