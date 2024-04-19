@@ -137,56 +137,38 @@ class MathsTutorBin(QWidget):
         self.image.setMovie(movie)
         movie.start()
 
-    # def speak(self, text, enqueue=False):
-    #     # if(enqueue == False):
-    #     #     self.speech.cancel();
-    #     # self.speech.speak(text)
-    #     return
+    
     def speak(self, text):
         self.text_to_speech.say(text)
-    # def speak(self, text):
-    #     os_name= platform.system()
-    #     if os_name== 'Darwin':
-    #         subprocess.run(['say', text])
-    #     elif os_name == 'Windows': 
-    #         #using SpeechSynthesizer api on windows but works on windows 10 or later only TESTING REQUIRED
-    #         subprocess.run(['powershell', '-Command', f'Add-Type -TypeDefinition @"public class Speech {{ public static void Speak(string text) {{ System.Speech.Synthesis.SpeechSynthesizer synth = new System.Speech.Synthesis.SpeechSynthesizer(); synth.Speak(text); }} "@; [Speech]::Speak("{text}")'])
-    #     elif os_name == 'Linux':
-    #         #espeak needs to installed on linux
-    #         subprocess.run(['espeak', text])
-    #     else:
-    #         print(f"Unsupported operating system: {os_name}")
-    #         return
    
     #Function to read the questions from the file
     def load_question_file(self, file_path):
-        # Resetting all game variables
         self.list = []
         self.current_question_index = -1
-        self.wrong=False
+        self.wrong = False
         self.number_of_questions_attended = 0
 
-        # Loading questions from file
+        #check if the file is a word problem file based on the prefix 'wp'
+        is_word_problem= os.path.basename(file_path).startswith('wp')
+
         with open(file_path, "r") as file:
             for line in file:
                 stripped_line = line.strip()
-                self.list.append(stripped_line)
+                if is_word_problem:
+                    #split each line into question and answer
+                    question_text, answer_text = stripped_line.split(" === ")
+                    self.list.append((question_text, answer_text))
+                else:
+                    self.list.append(stripped_line)
 
-        # Set the text of the label to the value of welcome_message
         self.label.setText(self.welcome_message)
-
         self.set_image("welcome", 3)
-
-        # Playing starting sound
         self.play_file('welcome')
-
         self.speak(self.welcome_message)
-
         self.entry.setFocus()
-
         self.game_over = False
 
-    
+
     # Function to covert the signs to text
     def convert_signs(self, text):
         return text.replace("+", " " + _("plus") + " ") \
@@ -218,159 +200,159 @@ class MathsTutorBin(QWidget):
 
     # Function to display the question and corresponding images and sounds
     def on_entry_activated(self):
-        if (self.game_over):
+        if self.game_over:
             self.game_over_callback_function()
-        elif (self.current_question_index == -1):
+        elif self.current_question_index== -1:
             self.starting_time = time.time()
-            self.wrong = False
-            self.current_performance_rate = 0
-            self.final_score = 0
-            self.incorrect_answer_count = 0
+            self.wrong= False
+            self.current_performance_rate= 0
+            self.final_score= 0
+            self.incorrect_answer_count= 0
             self.next_question()
         else:
-            answer = self.entry.text() 
-            correct_answer = self.answer
+            user_answer= self.entry.text().strip()
+            question= self.list[self.current_question_index]
             
-            if answer == correct_answer:                
-                time_end = time.time()
-
-                time_taken = time_end - self.time_start
-
-                time_alotted = int(self.list[self.current_question_index].split("===")[1])
-
-                print(
-                    f"\n### Time Allotted ###\n"
-                    f"Excellent: {time_alotted - (time_alotted * 50) / 100}\n"
-                    f"Very Good: {time_alotted - (time_alotted * 25) / 100}\n"
-                    f"Good: {time_alotted}\n"
-                    f"Fair: {time_alotted + (time_alotted * 25) / 100}\n"
-                    f"### Time Taken: {time_taken}\n\n"
-                )
-
-                self.incorrect_answer_count = 0
-
-                appreciation_index = random.randint(0, 4)
-
-                if time_taken < time_alotted - ((time_alotted * 50) / 100):
-                    self.current_performance_rate += 4
-                    self.final_score += 50
-                    text = self.appreciation_dict["Excellent"][appreciation_index]
+            #checking if this is a word problem
+            if isinstance(question, tuple):
+                #word problem logic
+                
+                question_text,correct_answer= question
+                if user_answer== correct_answer:
+                    self.final_score += 10 
+                    text = random.choice(self.appreciation_dict["Excellent"])
                     self.set_image("excellent", 3)
                     self.play_file("excellent", 3)
-                elif time_taken < time_alotted - ((time_alotted * 25) / 100):
-                    self.current_performance_rate += 2
-                    self.final_score += 40
-                    text = self.appreciation_dict["Very good"][appreciation_index]
-                    self.set_image("very-good", 3)
-                    self.play_file("very-good", 3)
-                elif time_taken < time_alotted:
-                    self.current_performance_rate += 1
-                    self.final_score += 30
-                    text = self.appreciation_dict["Good"][appreciation_index]
-                    self.set_image("good", 3)
-                    self.play_file("good", 3)
-                elif time_taken < time_alotted + ((time_alotted * 25) / 100):
-                    # No changes to self.current_performance_rate
-                    self.final_score += 20
-                    text = self.appreciation_dict["Fair"][appreciation_index]
-                    self.set_image("not-bad", 3)
-                    self.play_file('not-bad', 3)
-                    
                 else:
-                    self.current_performance_rate -= 1
-                    self.final_score += 10
-                    text = self.appreciation_dict["Okay"][appreciation_index]
-                    self.set_image("okay", 3)
-                    self.play_file('okay', 3)
-                text = text + "!"
-                self.speak(text)
-                self.label.setText(text)
-
+                    self.incorrect_answer_count += 1
+                    text = _("Sorry! The correct answer is ") + correct_answer
+                    self.final_score -= 5  
+                
+                #need to add hint logic and time logic above
+                
             else:
-                self.wrong = True
-                self.current_performance_rate -= 3
-                self.final_score -= 10
-                self.incorrect_answer_count = self.incorrect_answer_count + 1
-                if self.incorrect_answer_count == 3:
-                    self.set_image("wrong-anwser-repeted", 2)
-                    self.play_file("wrong-anwser-repeted", 3)
-                    self.incorrect_answer_count = 0
-                    text = _("Sorry! The correct answer is ")
-                    self.label.setText(text + self.answer) 
-                    if(len(self.answer.split(".")) > 1):
-                        li = list(self.answer.split(".")[1])
-                        self.speak(text + self.answer.split(".")[0] + " " + _("point") + " " + " ".join(li))
+                #pre-existing numeric problem logic
+                correct_answer = self.answer
+                if user_answer == correct_answer:
+                    time_end = time.time()
+                    time_taken = time_end - self.time_start
+                    time_alotted = int(question.split("===")[1])
+                    appreciation_index = random.randint(0, 4)
+                    if time_taken < time_alotted - (time_alotted * 50 / 100):
+                        self.current_performance_rate += 4
+                        self.final_score += 50
+                        text = self.appreciation_dict["Excellent"][appreciation_index]
+                        self.set_image("excellent", 3)
+                        self.play_file("excellent", 3)
+                    elif time_taken < time_alotted - (time_alotted * 25 / 100):
+                        self.current_performance_rate += 2
+                        self.final_score += 40
+                        text = self.appreciation_dict["Very good"][appreciation_index]
+                        self.set_image("very-good", 3)
+                        self.play_file("very-good", 3)
+                    elif time_taken < time_alotted:
+                        self.current_performance_rate += 1
+                        self.final_score += 30
+                        text = self.appreciation_dict["Good"][appreciation_index]
+                        self.set_image("good", 3)
+                        self.play_file("good", 3)
+                    elif time_taken < time_alotted + (time_alotted * 25 / 100):
+                        self.final_score += 20
+                        text = self.appreciation_dict["Fair"][appreciation_index]
+                        self.set_image("not-bad", 3)
+                        self.play_file("not-bad", 3)
                     else:
-                        self.speak(text + self.answer)
-                    
+                        self.current_performance_rate -= 1
+                        self.final_score += 10
+                        text = self.appreciation_dict["Okay"][appreciation_index]
+                        self.set_image("okay", 3)
+                        self.play_file("okay", 3)
                 else:
-                    text = _("Sorry! Let's try again")
-                    self.label.setText(text) 
-                    self.speak(text)
-                    self.set_image("wrong-anwser", 3)
-                    self.play_file("wrong-anwser", 3)
+                    self.wrong = True
+                    self.current_performance_rate -= 3
+                    self.final_score -= 10
+                    self.incorrect_answer_count += 1
+                    if self.incorrect_answer_count == 3:
+                        text = _("Sorry! The correct answer is ") + correct_answer
+                        self.incorrect_answer_count = 0
+                    else:
+                        text = _("Sorry! Let's try again")
+                        self.label.setText(text) 
+                        self.speak(text)
+                        self.set_image("wrong-anwser", 3)
+                        self.play_file("wrong-anwser", 3)
+            # Set the label and speak the text
+            self.label.setText(text + "!")
+            self.speak(text)
+            if self.incorrect_answer_count == 3 and not isinstance(question, tuple):  # only show image if it's a repeated wrong answer
+                self.set_image("wrong-answer-repeated", 2)
+                self.play_file("wrong-answer-repeated", 3)
+
             QTimer.singleShot(3000, self.next_question)
-            self.entry.setText("") 
+            self.entry.setText("")
 
     # Function to set next question        
     def next_question(self):
         self.time_start = time.time()
         self.entry.setFocus()
 
-
-        if self.wrong==True:
+        if self.wrong:
             self.label.setText(self.question)
             self.announce_question_using_thread()
-            self.set_image("wrong-anwser", 3)
-            self.wrong=False
+            self.set_image("wrong-answer", 3) 
+            self.wrong = False
         else:
-            print("Current Performance Rate = "+str(self.current_performance_rate)+
-            " Question index shift = " + str(math.floor(self.current_performance_rate/10)+1))
-            next_question = self.current_question_index + math.floor(self.current_performance_rate/10)+1;
-            if(next_question >= 0):
-                self.current_question_index = next_question
+            next_question_index = self.current_question_index + math.floor(self.current_performance_rate / 10) + 1
+            if next_question_index >= 0:
+                self.current_question_index = next_question_index
 
-            if self.current_question_index < len(self.list)-1:
-                question_to_pass = self.list[self.current_question_index].split("===")[0]
-                self.question = self.make_question(question_to_pass)
-                question_to_evaluate = self.question
-                if("%" in self.question):
-                    digit_one, digit_two = self.question.split("%")
-                    question_to_evaluate = "("+digit_one+"*"+digit_two+")/100"
+            if self.current_question_index < len(self.list):
+                current_entry = self.list[self.current_question_index]
 
-                number = eval(question_to_evaluate)
-                if number==math.trunc(number):
-                    self.answer = str(math.trunc(number))
-                else:
-                    num= round(eval(str(number)),2)
-                    self.answer = str(num)
+                font = QFont("Arial", 100)  #default font size for traditional problems
+                if isinstance(current_entry, tuple):  #handling word problems
+                    self.question, self.answer = current_entry
+                    self.make_sound = '0'
+                    font.setPointSize(50)  #reduce font size for word problems to fix word wrap
+                    self.set_image("question", 2)
+                else:  #handling traditional problems below
+                    question_to_pass = current_entry.split("===")[0]
+                    self.question = self.make_question(question_to_pass)
+                    question_to_evaluate = self.question
+                    if "%" in self.question:
+                        digit_one, digit_two = self.question.split("%")
+                        question_to_evaluate = f"({digit_one}*{digit_two})/100"
 
-                self.make_sound = self.list[self.current_question_index].split("===")[2]
-                self.label.setText(self.question)                
-                self.announce_question_using_thread()
-                
-                self.entry.setText("")
-                self.set_image("question", 2)
+                    number = eval(question_to_evaluate)
+                    self.answer = str(math.trunc(number)) if number == math.trunc(number) else str(round(number, 2))
+                    self.make_sound = current_entry.split("===")[2]
+                    self.set_image("question", 2)
 
-                self.number_of_questions_attended += 1
-
-            else:
-                minute, seconds = divmod(round(time.time()-self.starting_time), 60)
-                score = round((self.final_score*100)/(50*self.number_of_questions_attended))
-                text = _("Successfully finished! Your mark is ")+str(score)+\
-                "!\n"+_("Time taken ")+str(minute)+" "+_("minutes and")+" "+str(seconds)+" "+_("seconds!");
-                self.speak(text)
-
-                #enabling word wrap for the congrats message but decreasing the font size to prevent overflow issues 
-                font = QFont()
-                font.setPointSize(30)
                 self.label.setFont(font)
-                self.label.setWordWrap(True)
-                self.label.setText(text)
-                self.set_image("finished", 3)
-                self.play_file("finished", 3)
-                self.game_over = True
-                
+                self.label.setText(self.question)
+                self.announce_question_using_thread()
+                self.entry.setText("")
+                self.number_of_questions_attended += 1
+            else:
+                self.finish_session()
+
+    #separated function of a session finish below
+    def finish_session(self):
+        minute, seconds = divmod(round(time.time() - self.starting_time), 60)
+        score = round((self.final_score * 100) / (50 * self.number_of_questions_attended))
+        text = _("Successfully finished! Your mark is ") + str(score) + \
+            "!\n" + _("Time taken ") + str(minute) + " " + _("minutes and ") + str(seconds) + " " + _("seconds!")
+        self.speak(text)
+
+       
+        font= QFont("Arial", 30) #smaller font size for better readability in wrap mode
+        self.label.setFont(font)
+        self.label.setWordWrap(True)
+        self.label.setText(text)
+        self.set_image("finished", 3)
+        self.play_file("finished", 3)
+        self.game_over = True
+    
     # Create random numbers
     def get_randome_number(self, value1, value2):
         if(int(value1) < int(value2)):

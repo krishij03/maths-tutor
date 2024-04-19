@@ -137,20 +137,6 @@ class SelectGame(QWidget):
         if previous_language!= self.pref.language:
             self.pref.speech_language= -1
         
-        # COMMENTED CODE BELOW IS TO RUN ENGLISH AS DEFAULT LANGUAGE
-        # lang_dialog = LanguageSelectionDialog(self, self.pref.language)
-        # result = lang_dialog.exec()
-        # if result == QDialog.accepted:
-        #     selected_language = lang_dialog.get_selected_language()
-        #     self.pref.language = list(language_dict.keys()).index(selected_language)
-        #     if lang_dialog.get_remember_selection():
-        #         self.pref.remember_language = 1
-        # else:
-        #     #setting default language for now (eng) which is at index 0
-        #     self.pref.language = 0 
-        # if previous_language != self.pref.language:
-        #     self.pref.speech_language = -1
-        
         self.operator_mapping = {
             _('Addition (+)'): {
                 _('Simple'): 'add_simple.txt',
