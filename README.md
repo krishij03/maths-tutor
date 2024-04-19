@@ -1,5 +1,21 @@
-# Maths-Tutor
-this is the qt6plug branch, code completely migrated from gtk to qt6
+
+# math-tutor
+
+this is the qt6plug branch
+
+
+## Improvements
+
+- Cross platform accessible gui (tested using VoiceOver for MacOS)
+- Self reliant framework
+- Language translation in regional languages such as  Malayalam, Sanskrit, Tamil, Hindi, Arabic
+- Multilingual speech available
+- Word problems support
+- Updated test setup.py file to package the application into Windows and MacOS 
+- Complete original migrated code to the latest Qt6 framework
+
+
+
 
 
 ## Installation
